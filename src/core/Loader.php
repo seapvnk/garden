@@ -44,6 +44,7 @@ class Loader
          */
         require_once CONTROLLER_PATH ."/{$controller}.php";
     }
+
 }
 
 

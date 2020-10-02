@@ -5,23 +5,50 @@ define ('G_WARNING', 2);
 define ('G_SUCCESS', 3);
 define ('G_INFO', 4);
 
-
 class GardenIO
 {
     const G_PROMPT = ' ❀ Garden ';
+    const EOL = PHP_EOL;
+    const _TAB = '    '; 
 
-    public function print($str, $status = null)
+    public static function print($str, $status = null)
     {
-        $prompt = self::color(self::G_PROMPT, 'white' ,'bgreen') ;
+        $prompt = self::color(self::G_PROMPT, 'white' ,'bgreen');
+        $str = " " . $str;
         if ($status) {
             $str = self::createEspecialMessage($str, $status);
         }
 
-        echo "{$prompt}$str\n"; 
+        echo "{$prompt}$str" . self::EOL; 
     }
 
+    public static function inputCount()
+    {
+        return count(self::args());
+    }
 
-    private function createEspecialMessage($str, $type)
+    public static function has($attr)
+    {
+        return isset($_GET[$attr]);
+    }
+
+    public static function args($which = null)
+    {
+        if (!$which) {
+            return $_GET;  
+        } elseif (is_array($which)) {
+            $inputs = [];
+            foreach ($which as $input) {
+                $input[$input] = $_GET[$input];
+            }
+            return $inputs;
+        } else {
+            return $_GET[$which];
+        }
+    } 
+
+
+    private static function createEspecialMessage($str, $type)
     {
         if ($type == G_ERROR) {
             $output = self::color(' Ops! ', 'white', 'red') . " " . self::color($str, 'red');
@@ -36,7 +63,7 @@ class GardenIO
         return $output;
     }
 
-    private function color($text, $color, $background = null)
+    private static function color($text, $color, $background = null)
     {
         // Colors
         $black = "[30m";

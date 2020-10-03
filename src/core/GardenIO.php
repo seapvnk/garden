@@ -32,6 +32,25 @@ class GardenIO
         return isset($_GET[$attr]);
     }
 
+    public static function getArgsThatStartsWith($str)
+    {
+        $args = [];
+        if ($str === '.') {
+            $str = '_';
+        }
+
+        foreach (array_keys(GardenIO::args()) as $arg) {
+            $pos = strpos($arg, $str);
+            if (is_bool($pos)) continue;
+
+            if (strpos($arg, $str) == 0) {
+                array_push($args, substr($arg, strlen($str)));
+            }
+        }
+
+        return $args;
+    }
+
     public static function args($which = null)
     {
         if (!$which) {

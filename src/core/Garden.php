@@ -16,10 +16,30 @@ class Garden
         ],
     ];
 
+
+    public static function performAction()
+    {
+        $action = self::getValidOption();
+        if (!$action)  {
+            GardenIO::print(
+            'Can\'t find a valid option. use flag list or help to see all available options', G_ERROR);
+            exit();
+        }
+
+        $optionToAction = GardenIO::args($action);
+        self::requireAdminPrivileges();
+
+        if ($optionToAction == null || $optionToAction === 'create') {
+            self::create($action);
+        }
+    }
+
+
     public static function expectArgs()
     {
         if (GardenIO::inputCount() === 0) {
             echo GardenIO::print('garden require at least one arg... Try "php garden.php help"', G_INFO);
+            exit();
         }
     }
 
@@ -48,6 +68,43 @@ class Garden
             }
         
             GardenIO::print($output, G_INFO);
+        }
+    }
+
+    // Privates
+
+    private static function create($obj)
+    {
+
+        $params = GardenIO::getArgsThatStartsWith('.');
+        print_r($params);
+    }
+
+    private static function getValidOption()
+    {
+        // find the first creat/delete option
+        foreach (array_keys(GardenIO::args()) as $option) {
+            if (self::isAction($option)) return $option;
+        }
+        return false;
+    }
+
+    private static function isAction($option)
+    {
+        $canNotCreate = ['help/list'];
+        foreach (self::$options as $key => $val) {
+            if ($option == $key && !in_array($option, $canNotCreate))
+                return true;
+        }
+
+        return false;
+    }
+
+    private static function requireAdminPrivileges()
+    {
+        if (!posix_getuid() == 0){
+            Garden::print('This action requires admin privileges', G_ERROR);
+            exit();
         }
     }
 }

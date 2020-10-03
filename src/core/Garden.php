@@ -73,12 +73,26 @@ class Garden
 
     // Privates
 
-    private static function create($obj)
+    private static function create($type)
     {
-
+        $obj = GardenIO::argNextTo($type);
         $params = GardenIO::getArgsThatStartsWith('.');
-        print_r($params);
+        
+        $typeCapitalized = ucwords($type);
+
+        if ($obj == false) {
+            GardenIO::print("Please give a valid name to your $typeCapitalized.", G_WARNING);    
+            exit();
+        } elseif (file_exists(SRC_PATH . "/$type/{$obj}.php")) {
+            GardenIO::print("$typeCapitalized '$obj' already exists.", G_WARNING);    
+            exit();
+        }
+        
+        GardenIO::print("$typeCapitalized '$obj' created successfully!", G_SUCCESS);
+
     }
+
+    #private static function create
 
     private static function getValidOption()
     {
@@ -103,7 +117,7 @@ class Garden
     private static function requireAdminPrivileges()
     {
         if (!posix_getuid() == 0){
-            Garden::print('This action requires admin privileges', G_ERROR);
+            GardenIO::print('This action requires admin privileges', G_ERROR);
             exit();
         }
     }

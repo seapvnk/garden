@@ -51,6 +51,16 @@ class GardenIO
         return $args;
     }
 
+    public static function argNextTo($str)
+    {
+        $returnNext = false;
+        foreach (array_keys(GardenIO::args()) as $arg) {
+            if ($returnNext) return $arg;
+            if ($arg === $str) $returnNext = true;
+        }
+        return false;
+    }
+
     public static function args($which = null)
     {
         if (!$which) {
@@ -72,7 +82,7 @@ class GardenIO
         if ($type == G_ERROR) {
             $output = self::color(' Ops! ', 'white', 'red') . " " . self::color($str, 'red');
         } elseif ($type == G_WARNING) {
-            $output = self::color(' Beware ', 'black', 'yellow') . " " . self::color($str, 'yellow');
+            $output = self::color(' Jeez ', 'black', 'yellow') . " " . self::color($str, 'yellow');
         } elseif ($type == G_SUCCESS) {
             $output = self::color(' Yay! ', 'bwhite', 'green') . " " . self::color($str, 'green');
         } else {

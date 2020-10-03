@@ -7,3 +7,4 @@ Loader::include('Garden');
 
 Garden::expectArgs();
 Garden::verifyListArgs();
+Garden::performAction();

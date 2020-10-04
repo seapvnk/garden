@@ -83,6 +83,11 @@ class GardenIO
         fclose($file);
     }
 
+    public static function delete($path)
+    {
+        unlink($path);
+    }
+
     private static function createEspecialMessage($str, $type)
     {
         if ($type == G_ERROR) {

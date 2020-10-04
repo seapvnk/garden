@@ -77,22 +77,47 @@ class Garden
     {
         $obj = GardenIO::argNextTo($type);
         $params = GardenIO::getArgsThatStartsWith('.');
-        
+        $path = SRC_PATH . "/$type/{$obj}.php";
         $typeCapitalized = ucwords($type);
 
         if ($obj == false) {
             GardenIO::print("Please give a valid name to your $typeCapitalized.", G_WARNING);    
             exit();
-        } elseif (file_exists(SRC_PATH . "/$type/{$obj}.php")) {
+        } elseif (file_exists($path)) {
             GardenIO::print("$typeCapitalized '$obj' already exists.", G_WARNING);    
             exit();
+        }
+
+        if ($type == 'model') {
+            $startFile = self::generateModelStarter($obj, $params);
+            GardenIO::writeFIle($path, $startFile);
         }
         
         GardenIO::print("$typeCapitalized '$obj' created successfully!", G_SUCCESS);
 
     }
 
-    #private static function create
+    private static function generateModelStarter($name, $props)
+    {
+        $table = strtolower($name) . 's'; // this is just a starter, fix grammar errors by yourself.
+
+        $output = "<?php " . GardenIO::EOL . GardenIO::EOL;
+        $output .= "class $name extends Model " . GardenIO::EOL . "{" . GardenIO::EOL;
+        
+        $output .= GardenIO::_TAB . 'protected static $table = ' . "'$table';"  . GardenIO::EOL;
+        
+        // properties
+        if (count($props) > 0) {
+            $output .= GardenIO::_TAB . 'protected static $columns = ['  . GardenIO::EOL;
+            foreach ($props as $prop) {
+                $output .= GardenIO::_TAB . GardenIO::_TAB . "'$prop'," . GardenIO::EOL;  
+            }
+            $output .= GardenIO::_TAB . '];' . GardenIO::EOL;
+        }
+        
+        $output .= GardenIO::EOL . "}"  . GardenIO::EOL  . GardenIO::EOL;
+        return $output;
+    }
 
     private static function getValidOption()
     {

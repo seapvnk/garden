@@ -42,7 +42,7 @@ class Loader
         /**
          * Include a controller
          */
-        require_once CONTROLLER_PATH ."/{$controller}.php";
+        require_once CONTROLLER_PATH ."/{$name}.php";
     }
 
 }

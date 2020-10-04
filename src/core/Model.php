@@ -4,6 +4,7 @@ class Model
 {
     protected static $table = '';
     protected static $columns = [];
+    protected static $public = [];
     protected $values = [];
 
     function __construct($arr, $sanitize = true)
@@ -44,6 +45,49 @@ class Model
             $conn->close();
 
         }
+    }
+
+    public function view()
+    {
+        $outputArr = [];
+        $arr = [];
+        $class = get_called_class();
+        if (count($class::$public) > 0) {
+            $arr = $class::$public;
+        } else {
+            $arr = $class::$public;
+        }
+
+        foreach ($arr as $attr) {
+            $outputArr[$attr] = $this->$attr;
+        }
+
+        return $outputArr;
+    }
+
+
+    public static function page($page, $numberPerPage, $filters = [], $columns = '*')
+    {
+        $pages = ceil(self::count() / $numberPerPage);
+        $offset = ($page - 1) * $numberPerPage;
+
+
+
+        $sql = "SELECT $columns FROM "
+                . static::$table . " "
+                . static::filters($filters)
+                . " LIMIT $offset, $numberPerPage";
+
+        $result = Database::query($sql);
+        $objects = [];
+        if ($result) {
+            $class = get_called_class();
+            while ($row = $result->fetch_assoc()) {
+                array_push($objects, new $class($row));
+            }
+        }
+
+        return $objects;
     }
 
     public static function all($filters = [], $columns = '*')
@@ -112,7 +156,7 @@ class Model
     public function count($filters = [])
     {
         $result = static::select($filters, 'COUNT(*) AS COUNT');
-        return $result->fetch_assoc()['COUNT'];
+        return (int) $result->fetch_assoc()['COUNT'];
     }
 
 

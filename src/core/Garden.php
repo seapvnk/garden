@@ -31,6 +31,8 @@ class Garden
 
         if ($optionToAction == null || $optionToAction === 'create') {
             self::create($action);
+        } else if ($optionToAction === 'delete' || $optionToAction === 'd') {
+            self::delete($action);
         }
     }
 
@@ -90,11 +92,36 @@ class Garden
 
         if ($type == 'model') {
             $startFile = self::generateModelStarter($obj, $params);
-            GardenIO::writeFIle($path, $startFile);
+        } elseif ($type == 'controller') {
+            $startFile = self::generateControllStarter($obj);    
         }
-        
-        GardenIO::print("$typeCapitalized '$obj' created successfully!", G_SUCCESS);
 
+        GardenIO::writeFIle($path, $startFile);
+        GardenIO::print("$typeCapitalized '$obj' created successfully!", G_SUCCESS);
+    }
+
+    private static function delete($type)
+    {
+        $obj = GardenIO::argNextTo($type);
+        $params = GardenIO::getArgsThatStartsWith('.');
+        $path = SRC_PATH . "/$type/{$obj}.php";
+        $typeCapitalized = ucwords($type);
+
+        if (!file_exists($path)) {
+            GardenIO::print("$typeCapitalized '$obj' doesn't exists.", G_ERROR);    
+            exit();
+        } else {
+            GardenIO::delete($path);
+            GardenIO::print("$typeCapitalized '$obj' deleted successfully!", G_SUCCESS);
+        }
+    }
+
+    private static function generateControllStarter($name)
+    {
+        $output = "<?php " . GardenIO::EOL . GardenIO::EOL;
+        $output .= "function $name()". GardenIO::EOL ."{". GardenIO::EOL . GardenIO::EOL . "}";
+
+        return $output;
     }
 
     private static function generateModelStarter($name, $props)

@@ -14,8 +14,7 @@ require_once CORE_PATH . '/Loader.php';
 require_once CORE_PATH . '/Session.php';
 
 require_once CORE_PATH . '/Model.php';
-#require_once CORE_PATH . '/View.php';
-#require_once CORE_PATH . '/Controller.php';
+require_once CORE_PATH . '/View.php';
 
 if (isset($GARDEN_SCOPE)) {
     parse_str(implode('&', array_slice($argv, 1)), $_GET);

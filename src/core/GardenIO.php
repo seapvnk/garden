@@ -76,6 +76,12 @@ class GardenIO
         }
     } 
 
+    public static function writeFile($path, $str)
+    {
+        $file = fopen($path, "w");
+        fwrite($file, $str);
+        fclose($file);
+    }
 
     private static function createEspecialMessage($str, $type)
     {

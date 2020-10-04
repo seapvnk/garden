@@ -6,6 +6,7 @@ class Garden
 {
     private static $options = [
         'help/list' => 'show all commands',
+        'htaccess' => 'change root of api',
         'model' => [
             '=delete' => 'delete a model',
             '=create' => 'create a model',
@@ -78,7 +79,6 @@ class Garden
     private static function create($type)
     {
         $obj = GardenIO::argNextTo($type);
-        $params = GardenIO::getArgsThatStartsWith('.');
         $path = SRC_PATH . "/$type/{$obj}.php";
         $typeCapitalized = ucwords($type);
 
@@ -91,9 +91,18 @@ class Garden
         }
 
         if ($type == 'model') {
-            $startFile = self::generateModelStarter($obj, $params);
+            $params = GardenIO::getArgsThatStartsWith('.');
+            $public = GardenIO::getArgsThatStartsWith('@');
+            $startFile = self::generateModelStarter($obj, $params, $public);
         } elseif ($type == 'controller') {
             $startFile = self::generateControllStarter($obj);    
+        } elseif ($type = 'htaccess') {
+            $param = GardenIO::argNextTo($type);
+            $startFile = self::generateHTACCESS($param);
+            $path = ROOT_PATH . '/.htaccess';
+            GardenIO::writeFIle($path, $startFile);
+            GardenIO::print("API root changed to $param", G_SUCCESS);
+            return;
         }
 
         GardenIO::writeFIle($path, $startFile);
@@ -103,7 +112,6 @@ class Garden
     private static function delete($type)
     {
         $obj = GardenIO::argNextTo($type);
-        $params = GardenIO::getArgsThatStartsWith('.');
         $path = SRC_PATH . "/$type/{$obj}.php";
         $typeCapitalized = ucwords($type);
 
@@ -116,15 +124,29 @@ class Garden
         }
     }
 
-    private static function generateControllStarter($name)
+    public static function generateHTACCESS($subpath)
     {
-        $output = "<?php " . GardenIO::EOL . GardenIO::EOL;
-        $output .= "function $name()". GardenIO::EOL ."{". GardenIO::EOL . GardenIO::EOL . "}";
+        if ($subpath == '@root') $subpath = '';
+        else $subpath  .= '/';
+        $output =  "RewriteEngine On" . GardenIO::EOL;
+        $output .= "RewriteBase /$subpath" . GardenIO::EOL;
+        $output .= "RewriteCond %{REQUEST_FILENAME} !-f" . GardenIO::EOL;
+        $output .= "RewriteCond %{REQUEST_FILENAME} !-d" . GardenIO::EOL;
+        $output .= "RewriteRule . /$subpath [NC]" . GardenIO::EOL;
 
         return $output;
     }
 
-    private static function generateModelStarter($name, $props)
+    private static function generateControllStarter($name)
+    {
+        $output = "<?php " . GardenIO::EOL . GardenIO::EOL;
+        $args = '($action, $params)';
+        $output .= "function $name{$args}". GardenIO::EOL ."{". GardenIO::EOL . GardenIO::EOL . "}";
+
+        return $output;
+    }
+
+    private static function generateModelStarter($name, $props, $public=[])
     {
         $table = strtolower($name) . 's'; // this is just a starter, fix grammar errors by yourself.
 
@@ -137,6 +159,15 @@ class Garden
         if (count($props) > 0) {
             $output .= GardenIO::_TAB . 'protected static $columns = ['  . GardenIO::EOL;
             foreach ($props as $prop) {
+                $output .= GardenIO::_TAB . GardenIO::_TAB . "'$prop'," . GardenIO::EOL;  
+            }
+            $output .= GardenIO::_TAB . '];' . GardenIO::EOL;
+        }
+
+        // view
+        if (count($public) > 0) {
+            $output .= GardenIO::_TAB . 'protected static $public = ['  . GardenIO::EOL;
+            foreach ($public as $prop) {
                 $output .= GardenIO::_TAB . GardenIO::_TAB . "'$prop'," . GardenIO::EOL;  
             }
             $output .= GardenIO::_TAB . '];' . GardenIO::EOL;

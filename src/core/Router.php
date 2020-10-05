@@ -22,22 +22,27 @@ class Router
 
     public function dispatch()
     {
-        $url = $_SERVER['REQUEST_URI'];
 
-        $parts = explode('/', $url);
-        $parts = array_slice($parts, 2);
+        try {
+            $url = $_SERVER['REQUEST_URI'];
 
-        $route = $parts[0];
-        $action = $parts[1]?? null;
-        $params = array_slice($parts, 2)?? null;
-        
-        
-        if (!array_key_exists($route, $this->routes)) {
-            return (new View())->output(400);
+            $parts = explode('/', $url);
+            $parts = array_slice($parts, 2);
+            
+            $route = $parts[0];
+            $action = $parts[1]?? null;
+            $params = array_slice($parts, 2)?? null;
+
+            if (!isset($this->routes[$route])) throw new Exception('404'); 
+            
+            $controller = $this->routes[$route];
+            $result = $controller($action, $params);
+            
+            return $result;
+        } catch (Exception $e) {
+            return (new View(["message" => "this page doesn't exists"]))->output(400);
         }
-
-        $controller = $this->routes[$route];
-        return $controller($action, $params);
+        
     }
 
 }

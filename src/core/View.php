@@ -9,7 +9,42 @@ class View
         $this->content += $properties;
     }
 
-    public function output(int $response)
+    public static function template($name, $params = [])
+    {
+        // binding variables
+        if (count($params) > 0) {
+            foreach ($params as  $variable => $value) {
+                if (strlen($variable) > 0) {
+                    // Set g_vars
+                    $GLOBALS["gv_" . $variable] = $value;
+                }
+            }
+        }
+
+        $filePath = Loader::template($name);
+        $template = self::readTemplateFile($filePath);
+
+        // replace view syntax by php syntax
+        $template = str_replace("{{", "<?=", $template);
+        $template = str_replace("{@", "<?php", $template);
+        $template = str_replace("}}", "?>", $template);
+
+        $tmpFile = uniqid("garden_view_");
+        $tmpFilePath = VIEW_PATH . "/" . $tmpFile . ".php";
+        
+
+        touch($tmpFilePath);
+        $tmpFileHandle = fopen($tmpFilePath, "w");
+        fwrite($tmpFileHandle, $template);
+        fclose($tmpFileHandle);
+
+        Loader::view($tmpFile);
+
+        unlink($tmpFilePath);
+        
+    }
+
+    public function outputJSON(int $response)
     {
         http_response_code($response);
         echo json_encode($this->content);
@@ -34,5 +69,18 @@ class View
     public function setModelAs(Model $model, $attr)
     {
         $this->content[$att] = $model->view();
+    }
+
+    private static function readTemplateFile($filePath)
+    {
+        $file = fopen($filePath, "r");
+        $template = '';
+        while(! feof($file)) {
+            $line = fgets($file);
+            $template .= $line;
+        }
+
+        fclose($file);
+        return $template;
     }
 }

@@ -28,6 +28,32 @@ class Loader
         }
     }
 
+    public static function view($name)
+    {
+        $path = VIEW_PATH . "/{$name}.php";
+        if (!is_file($path)) return false;
+
+        // Load g_vars from globals
+        foreach ($GLOBALS as $key => $val) {
+            if (substr($key, 0, 3) === 'gv_') {
+                ${str_replace('gv_', '', $key)} = $val;
+            }
+        }
+
+        require_once $path;
+
+    }
+
+    public static function template($name)
+    {
+        $path = VIEW_PATH . "/{$name}.garden.php";
+        if (!is_file($path)) {
+            return false;
+        } else {
+            return $path;
+        }
+    }
+
     // Private methods
     private static function model($name)
     {

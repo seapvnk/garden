@@ -6,6 +6,7 @@ define('SRC_PATH', ROOT_PATH . '/src');
 define('CORE_PATH', SRC_PATH . '/core');
 define('MODEL_PATH', SRC_PATH . '/model');
 define('CONTROLLER_PATH', SRC_PATH . '/controller');
+define('VIEW_PATH', SRC_PATH . '/view');
 
 
 // Classes
@@ -18,4 +19,9 @@ require_once CORE_PATH . '/View.php';
 
 if (isset($GARDEN_SCOPE)) {
     parse_str(implode('&', array_slice($argv, 1)), $_GET);
+}
+
+// alias View::template as view
+function view($template, $params = []) {
+    View::template($template, $params);
 }

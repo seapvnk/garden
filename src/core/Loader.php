@@ -46,6 +46,7 @@ class Loader
 
     public static function template($name)
     {
+        $name = trim($name);
         $path = VIEW_PATH . "/{$name}.garden.php";
         if (!is_file($path)) {
             return false;

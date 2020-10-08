@@ -32,21 +32,19 @@ class View
         $template = str_replace("{%", "<?php view('", $template);
         $template = str_replace("%}", "')?>", $template);
             
-            
-
 
         $tmpFile = uniqid("garden_view_");
         $tmpFilePath = VIEW_PATH . "/" . $tmpFile . ".php";
-        
 
         touch($tmpFilePath);
         $tmpFileHandle = fopen($tmpFilePath, "w");
         fwrite($tmpFileHandle, $template);
         fclose($tmpFileHandle);
-
         Loader::view($tmpFile);
 
+
         unlink($tmpFilePath);
+
         
     }
 

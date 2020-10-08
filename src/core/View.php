@@ -28,6 +28,12 @@ class View
         $template = str_replace("{{", "<?=", $template);
         $template = str_replace("{@", "<?php", $template);
         $template = str_replace("}}", "?>", $template);
+        // view shortag
+        $template = str_replace("{%", "<?php view('", $template);
+        $template = str_replace("%}", "')?>", $template);
+            
+            
+
 
         $tmpFile = uniqid("garden_view_");
         $tmpFilePath = VIEW_PATH . "/" . $tmpFile . ".php";

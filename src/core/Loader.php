@@ -49,7 +49,10 @@ class Loader
         $name = trim($name);
         $path = VIEW_PATH . "/{$name}.garden.php";
         if (!is_file($path)) {
-            return false;
+            echo "  <div style=\"width: 70vw ; margin: auto; padding: 1rem; color: white; background: tomato;\"> 
+                        oops: View $name doesn't exists
+                    </div>";
+            exit;
         } else {
             return $path;
         }

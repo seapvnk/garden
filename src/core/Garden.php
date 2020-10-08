@@ -180,6 +180,7 @@ class Garden
     private static function getValidOption()
     {
         // find the first creat/delete option
+        if (GardenIO::has('help') || GardenIO::has('list')) exit;
         foreach (array_keys(GardenIO::args()) as $option) {
             if (self::isAction($option)) return $option;
         }

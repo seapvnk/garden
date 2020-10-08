@@ -13,9 +13,9 @@ class Session {
 
     public static function __callStatic($name, $arguments)
     {
-        if (stripos('unset', $name) === 0) {
+        if (stripos('u_', $name) == 0) {
             // unset
-            $variable = str_replace('unset', '',  $name);
+            $variable = str_replace('u_', '',  $name);
             self::stateRemove($variable);
 
         } else {

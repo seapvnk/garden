@@ -14,14 +14,21 @@ class Session {
     public static function __callStatic($name, $arguments)
     {
         if (stripos('unset', $name) === 0) {
+            // unset
             $variable = str_replace('unset', '',  $name);
             self::stateRemove($variable);
+
         } else {
+
             if (!isset($arguments) || count($arguments) === 0) {
+
                 return (self::state())->$name;
+            
             } elseif (count($arguments) === 1) {
+
                 (self::state())->$name = $arguments[0];
             } else {
+
                 (self::state())->$name = $arguments;
             }
         }
@@ -29,6 +36,7 @@ class Session {
 
     private static function state()
     {
+        if (!isset($_SESSION)) session_start();
         return new Session($_SESSION);
     }
 
@@ -39,13 +47,26 @@ class Session {
 
     public function __set($name, $value) 
     {
-        $_SESSION[$name] = serialize($value);
+        if (is_object($value)) {
+            $_SESSION[$name] = serialize($value);
+        } else {
+            $_SESSION[$name] = $value;
+        }
+
     }
  
     public function __get($name) 
     {
+        
         $item = $_SESSION[$name]?? null;
-        return unserialize($item);
+        $output = $_SESSION[$name];
+        $unserializedOuput = @unserialize($output);
+
+        if ($unserializedOuput) {
+            return $unserializedOuput;
+        }
+        
+        return $output;
     }
 
 }

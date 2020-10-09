@@ -36,6 +36,10 @@ class Storage
 
     public static function save($field, $dir = '')
     {
+        if (!is_dir(self::getFolder())) {
+            mkdir(self::getFolder());
+        }
+
         if ($dir !== '') {
             $dir .= '/';
         }

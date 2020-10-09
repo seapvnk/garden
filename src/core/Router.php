@@ -20,7 +20,7 @@ class Router
         }
     }
 
-    public function dispatch()
+    public function dispatch($json = false)
     {
 
         try {
@@ -33,14 +33,20 @@ class Router
             $action = $parts[1]?? null;
             $params = array_slice($parts, 2)?? null;
 
-            if (!isset($this->routes[$route])) throw new Exception('404'); 
-            
+            if (!isset($this->routes[$route])) {
+                if ($json)
+                    return (new View(["message" => "this page doesn't exists"]))->outputJSON(400);
+                else
+                    return view('404');
+            }
+
             $controller = $this->routes[$route];
             $result = $controller($action, $params);
             
             return $result;
         } catch (Exception $e) {
-            return (new View(["message" => "this page doesn't exists"]))->output(400);
+            echo $e->getMessage();
+            #return (new View(["message" => "this page doesn't exists"]))->outputJSON(400);
         }
         
     }

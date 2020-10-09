@@ -36,6 +36,7 @@ class Storage
 
     public static function save($field, $dir = '')
     {
+        $virtualDir = $dir . "/";
         if (!is_dir(self::getFolder())) {
             mkdir(self::getFolder());
         }
@@ -52,7 +53,7 @@ class Storage
 
         $uploadPath = self::generateUploadPath($dir, $_FILES[$field]['name']);
         if (move_uploaded_file($_FILES[$field]['tmp_name'], $uploadPath)) {
-            return $uploadPath;
+            return $virtualDir . str_replace($dir, '', $uploadPath);
         } else {
             return false;
         }

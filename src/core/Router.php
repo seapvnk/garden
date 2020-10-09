@@ -48,8 +48,7 @@ class Router
             
             return $result;
         } catch (Exception $e) {
-            echo $e->getMessage();
-            #return (new View(["message" => "this page doesn't exists"]))->outputJSON(400);
+            return (new View(["message" => "this page doesn't exists"]))->outputJSON(400);
         }
         
     }

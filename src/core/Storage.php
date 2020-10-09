@@ -68,6 +68,6 @@ class Storage
 
     public static function getFolder()
     {
-        return SRC_PATH . '/storage/';
+        return ROOT_PATH . '/public/data/';
     }
 }

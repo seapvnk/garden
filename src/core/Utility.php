@@ -14,6 +14,17 @@ class Utility
         header("Location: ${url}");
     }
 
+    public static function setArray($array, ...$setToNull)
+    {
+        $newArray = $array;
+        foreach ($setToNull as $nullVal) {
+            if (!isset($newArray[$nullVal]))
+                $newArray[$nullVal] = null;
+        }
+
+        return $newArray;
+    }
+
     public static function getDateAsDateTime($date)
     {
         return is_string($date)? new Datetime($date) : $date;

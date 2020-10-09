@@ -4,8 +4,11 @@ class Router
 {
     private $routes = [];
 
-    public function bind(string $path, $controller)
+    public function bind(string $path, $controller = null)
     {
+        if (!$controller) {
+            $controller = $path;
+        }
         if (is_string($controller)) {
             Loader::include($controller, 'Controller');
         }

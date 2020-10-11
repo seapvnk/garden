@@ -16,19 +16,30 @@ class Router
         $this->routes[$path] = $controller;
     }
 
-    public function protect($condition, array $routes, callable $error)
+    public function unbind(string $path)
     {
-        foreach ($routes as $route) {
-            if ($condition) {
-                $error();
+        unset($this->routes[$path]);
+    }
+
+    public function protect($condition, array $routes, $accessDenied)
+    {
+        if ($condition) {
+            foreach ($routes as $route) {
+
+                if (is_string($accessDenied)) {
+                    Loader::include($accessDenied, 'Controller');
+                }
+
+                $this->bind($route, $accessDenied);
             }
         }
     }
 
-    public function bindMany(array $routes)
+    public function bindall(array $routes)
     {
-        foreach ($route as $path => $controller) {
-            $this->routes[$path] = $controller;
+        foreach ($routes as $route) {
+            Loader::include($route, 'Controller');
+            $this->routes[$route] = $route;
         }
     }
 

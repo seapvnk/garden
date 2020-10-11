@@ -69,9 +69,7 @@ class Model
     public static function page($page, $numberPerPage, $filters = [], $columns = '*')
     {
         $pages = ceil(self::count() / $numberPerPage);
-        $offset = ($page - 1) * $numberPerPage;
-
-
+        $offset = ($pages - 1) * $numberPerPage;
 
         $sql = "SELECT $columns FROM "
                 . static::$table . " "

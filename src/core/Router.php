@@ -16,6 +16,15 @@ class Router
         $this->routes[$path] = $controller;
     }
 
+    public function protect($condition, array $routes, callable $error)
+    {
+        foreach ($routes as $route) {
+            if ($condition) {
+                $error();
+            }
+        }
+    }
+
     public function bindMany(array $routes)
     {
         foreach ($route as $path => $controller) {

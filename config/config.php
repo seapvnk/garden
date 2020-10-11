@@ -2,6 +2,7 @@
 
 // Directories
 define('ROOT_PATH', str_replace('/config', '', __DIR__));
+define('SERVER_ROOT', 'http://localhost');
 define('SRC_PATH', ROOT_PATH . '/src');
 define('CORE_PATH', SRC_PATH . '/core');
 define('MODEL_PATH', SRC_PATH . '/model');

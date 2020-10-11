@@ -2,9 +2,6 @@
 
 class Utility
 {
-    const DAILY_TIME = 8 * 60 ** 2;
-    const HOUR = 3600;
-    
     public static function redirect($location)
     {
         $url = $_SERVER['REQUEST_URI'];
@@ -12,6 +9,13 @@ class Utility
         
         $url = '/' . $parts[1] . '/' . $location;
         header("Location: ${url}");
+        exit;
+    }
+
+    public static function sendTo($url)
+    {
+        header("Location: ${url}");
+        exit;
     }
 
     public static function setArray($array, ...$setToNull)

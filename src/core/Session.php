@@ -56,15 +56,18 @@ class Session {
  
     public function __get($name) 
     {
-        $item = $_SESSION[$name]?? null;
-        $output = $_SESSION[$name];
-        $unserializedOuput = @unserialize($output);
-
-        if ($unserializedOuput) {
-            return $unserializedOuput;
+        if ($_SESSION && isset($_SESSION[$name])) {
+            $item = $_SESSION[$name]?? null;
+            $output = $_SESSION[$name];
+            $unserializedOuput = @unserialize($output);
+    
+            if (is_object($unserializedOuput)) {
+                return $unserializedOuput;
+            }
+            
+            return $output;
         }
-        
-        return $output;
+        return null;
     }
 
 }

@@ -6,7 +6,6 @@ class Garden
 {
     private static $options = [
         'help/list' => 'show all commands',
-        'htaccess' => 'change root of api',
         'model' => [
             '=delete' => 'delete a model',
             '=create' => 'create a model',
@@ -96,13 +95,6 @@ class Garden
             $startFile = self::generateModelStarter($obj, $params, $public);
         } elseif ($type == 'controller') {
             $startFile = self::generateControllStarter($obj);    
-        } elseif ($type = 'htaccess') {
-            $param = GardenIO::argNextTo($type);
-            $startFile = self::generateHTACCESS($param);
-            $path = ROOT_PATH . '/.htaccess';
-            GardenIO::writeFIle($path, $startFile);
-            GardenIO::print("API root changed to $param", G_SUCCESS);
-            return;
         }
 
         GardenIO::writeFIle($path, $startFile);
@@ -124,18 +116,6 @@ class Garden
         }
     }
 
-    public static function generateHTACCESS($subpath)
-    {
-        if ($subpath == '@root') $subpath = '';
-        else $subpath  .= '/';
-        $output =  "RewriteEngine On" . GardenIO::EOL;
-        $output .= "RewriteBase /$subpath" . GardenIO::EOL;
-        $output .= "RewriteCond %{REQUEST_FILENAME} !-f" . GardenIO::EOL;
-        $output .= "RewriteCond %{REQUEST_FILENAME} !-d" . GardenIO::EOL;
-        $output .= "RewriteRule . /$subpath [NC]" . GardenIO::EOL;
-
-        return $output;
-    }
 
     private static function generateControllStarter($name)
     {

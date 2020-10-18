@@ -3,3 +3,11 @@ RewriteBase /garden/
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . /garden/ [NC]
+
+# Production
+# RewriteEngine On
+# RewriteCond %{REQUEST_FILENAME} !-f
+# RewriteCond %{REQUEST_FILENAME} !-d
+# ReWriteEngine on
+
+# ReWriteRule . index.php [NC]

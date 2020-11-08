@@ -32,7 +32,7 @@ At this point you're supposed to see an starter page [here](http://localhost/mya
 
 
 ## Documentation 
-The documentation is'nt available for now.
+The documentation isn't available for now.
 
 
 ## Licence

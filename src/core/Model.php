@@ -47,25 +47,6 @@ class Model
         }
     }
 
-    public function view()
-    {
-        $outputArr = [];
-        $arr = [];
-        $class = get_called_class();
-        if (count($class::$public) > 0) {
-            $arr = $class::$public;
-        } else {
-            $arr = $class::$public;
-        }
-
-        foreach ($arr as $attr) {
-            $outputArr[$attr] = $this->$attr;
-        }
-
-        return $outputArr;
-    }
-
-
     public static function page($page, $numberPerPage, $filters = [], $columns = '*')
     {
         $pages = ceil(self::count($filters) / $numberPerPage);
@@ -107,18 +88,30 @@ class Model
     {
         $class = get_called_class();
         $result =  static::select($filters, $columns);
-        return $result? new $class($result->fetch_assoc()) : null;
+        return $result? new $class($result->fetch_assoc(), false) : null;
     }
 
-    public static function select($filters = [], $columns = '*')
+    public static function select($filters = [], $columns = '*', $desc = true)
     {
         $sql = "SELECT $columns FROM "
                 . static::$table . " "
                 . static::filters($filters);
 
-        $result = Database::query($sql);
+                // var_dump($sql);
+        $result = Database::query($sql . ($desc? " ORDER BY id DESC" : "") );
 
         return $result;
+    }
+
+    public static function getRandom($filters = [])
+    {
+        $sql = "SELECT * FROM "
+                . static::$table 
+                . " ORDER BY RAND() LIMIT 1;";
+
+        $result = Database::query($sql);        
+        $class = get_called_class();
+        return $result? new $class($result->fetch_assoc()) : null;
     }
 
     public function insert()
@@ -151,7 +144,7 @@ class Model
         Database::execute($sql);
     }
 
-    public function count($filters = [])
+    public static function count($filters = [])
     {
         $result = static::select($filters, 'COUNT(*) AS COUNT');
         return (int) $result->fetch_assoc()['COUNT'];
